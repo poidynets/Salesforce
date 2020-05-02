@@ -1,0 +1,23 @@
+trigger UpdDescrTr on Account (before update) 
+{
+    if(Trigger.isUpdate)
+    {
+        List<Account> listToUpdate = new List<Account>();
+        
+        for (Account triggeredAccount :Trigger.new)
+        {
+            if ((triggeredAccount.BillingCountry  != Trigger.oldMap.get(triggeredAccount.id).BillingCountry && Trigger.oldMap.get(triggeredAccount.id).BillingCountry !=null)||(triggeredAccount.BillingCity != Trigger.oldMap.get(triggeredAccount.id).BillingCity&& Trigger.oldMap.get(triggeredAccount.id).BillingCity !=null))
+            {
+                if (triggeredAccount.Description !=null)
+                {
+                    triggeredAccount.Description = triggeredAccount.Description + ', '+'Capturing previous Account details which were changed at ' + triggeredAccount.LastModifiedDate+ ' which was done by user with ID '+triggeredAccount.LastModifiedById + ': ' + Trigger.oldMap.get(triggeredAccount.id).BillingCountry + ', '+ Trigger.oldMap.get(triggeredAccount.id).BillingCity;
+                }
+                else 
+                {
+                    triggeredAccount.Description = 'Capturing previous Account details which were changed at ' + triggeredAccount.LastModifiedDate+ ' which was done by user with ID '+triggeredAccount.LastModifiedById + ': ' + Trigger.oldMap.get(triggeredAccount.id).BillingCountry + ', '+ Trigger.oldMap.get(triggeredAccount.id).BillingCity;
+                }
+                listToUpdate.add(triggeredAccount);
+            }
+        }
+    }
+}
