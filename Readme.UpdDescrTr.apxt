@@ -1,0 +1,6 @@
+# Salesforce
+
+Description for UpdDescrTr.apxt file:
+Created a trigger with next details:
+a trigger which is enabling when the value of «Billing County» or «Billing City» field changes in the Account object. When the trigger is triggered, the previous filed values ​​are saving at «Description» field, on Account object.
+
