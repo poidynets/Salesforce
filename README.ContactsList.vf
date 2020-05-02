@@ -1,6 +1,6 @@
 # Salesforce
 
-Descriptiov for ContactsList.vf file:
+Description for ContactsList.vf file:
 Creation of a separate visualforce page, which in a tabular form will display the Contacts of the selected organization.
 
 Implementation:
