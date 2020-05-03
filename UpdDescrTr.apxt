@@ -6,18 +6,43 @@ trigger UpdDescrTr on Account (before update)
         
         for (Account triggeredAccount :Trigger.new)
         {
-            if ((triggeredAccount.BillingCountry  != Trigger.oldMap.get(triggeredAccount.id).BillingCountry && Trigger.oldMap.get(triggeredAccount.id).BillingCountry !=null)||(triggeredAccount.BillingCity != Trigger.oldMap.get(triggeredAccount.id).BillingCity&& Trigger.oldMap.get(triggeredAccount.id).BillingCity !=null))
+            if ((triggeredAccount.BillingCountry  != Trigger.oldMap.get(triggeredAccount.id).BillingCountry && Trigger.oldMap.get(triggeredAccount.id).BillingCountry !=null)&&(triggeredAccount.BillingCity != Trigger.oldMap.get(triggeredAccount.id).BillingCity&& Trigger.oldMap.get(triggeredAccount.id).BillingCity !=null))
             {
                 if (triggeredAccount.Description !=null)
                 {
-                    triggeredAccount.Description = triggeredAccount.Description + ', '+'Capturing previous Account details which were changed at ' + triggeredAccount.LastModifiedDate+ ' which was done by user with ID '+triggeredAccount.LastModifiedById + ': ' + Trigger.oldMap.get(triggeredAccount.id).BillingCountry + ', '+ Trigger.oldMap.get(triggeredAccount.id).BillingCity;
+                    triggeredAccount.Description = triggeredAccount.Description + ', '+'Capturing previous Account details which were changed at ' +  date.today()+ ' by user with ID '+triggeredAccount.LastModifiedById + ': ' + Trigger.oldMap.get(triggeredAccount.id).BillingCountry + ', '+ Trigger.oldMap.get(triggeredAccount.id).BillingCity;
                 }
                 else 
                 {
-                    triggeredAccount.Description = 'Capturing previous Account details which were changed at ' + triggeredAccount.LastModifiedDate+ ' which was done by user with ID '+triggeredAccount.LastModifiedById + ': ' + Trigger.oldMap.get(triggeredAccount.id).BillingCountry + ', '+ Trigger.oldMap.get(triggeredAccount.id).BillingCity;
+                    triggeredAccount.Description = 'Capturing previous Account details which were changed at ' +  date.today()+ ' by user with ID '+triggeredAccount.LastModifiedById + ': ' + Trigger.oldMap.get(triggeredAccount.id).BillingCountry + ', '+ Trigger.oldMap.get(triggeredAccount.id).BillingCity;
                 }
-                listToUpdate.add(triggeredAccount);
             }
+            else if ((triggeredAccount.BillingCountry  != Trigger.oldMap.get(triggeredAccount.id).BillingCountry && Trigger.oldMap.get(triggeredAccount.id).BillingCountry !=null)||(triggeredAccount.BillingCity != Trigger.oldMap.get(triggeredAccount.id).BillingCity&& Trigger.oldMap.get(triggeredAccount.id).BillingCity !=null))
+            {
+                if (triggeredAccount.BillingCountry  != Trigger.oldMap.get(triggeredAccount.id).BillingCountry && Trigger.oldMap.get(triggeredAccount.id).BillingCountry !=null)
+                {
+                    if (triggeredAccount.Description !=null)
+                    {
+                        triggeredAccount.Description = triggeredAccount.Description + ', '+'Capturing previous Account details which were changed at ' + date.today()+ ' by user with ID '+triggeredAccount.LastModifiedById + ': ' + Trigger.oldMap.get(triggeredAccount.id).BillingCountry;
+                    }
+                    else 
+                    {
+                        triggeredAccount.Description = 'Capturing previous Account details which were changed at ' +  date.today()+ ' by user with ID '+triggeredAccount.LastModifiedById + ': ' + Trigger.oldMap.get(triggeredAccount.id).BillingCountry;
+                    }
+                }
+                else 
+                {
+                    if (triggeredAccount.Description !=null)
+                    {
+                        triggeredAccount.Description = triggeredAccount.Description + ', '+'Capturing previous Account details which were changed at ' +  date.today()+ ' by user with ID '+triggeredAccount.LastModifiedById + ': ' + Trigger.oldMap.get(triggeredAccount.id).BillingCity;
+                    }
+                    else 
+                    {
+                        triggeredAccount.Description = 'Capturing previous Account details which were changed at ' +  date.today()+ ' by user with ID '+triggeredAccount.LastModifiedById + ': ' + Trigger.oldMap.get(triggeredAccount.id).BillingCity;
+                    }
+                }
+            }
+            listToUpdate.add(triggeredAccount);
         }
     }
 }
