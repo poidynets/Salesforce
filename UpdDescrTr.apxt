@@ -1,6 +1,5 @@
 trigger UpdDescrTr on Account (before update) 
 {
-    if(Trigger.isUpdate)
     {
         List<Account> listToUpdate = new List<Account>();
         
