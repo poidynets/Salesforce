@@ -1,0 +1,21 @@
+public class RecordUnlockApexController {
+    @AuraEnabled
+    // We are providing Order Number and unlocking related records
+    public static void unlockCaseRecord(String orderId) {
+        Order oNumber =[select id from order where id =:orderId];
+        Approval.UnlockResult unlockedRersult = Approval.unlock(oNumber);
+        // Iterate through each returned result
+        if (unlockedRersult.isSuccess()) {
+            // Operation was successful, so get the ID of the record that was processed
+            System.debug('Successfully unlocked order with ID: ' + unlockedRersult.getId());
+        }
+        else {
+            // Operation failed, so get all errors
+            for(Database.Error err : unlockedRersult.getErrors()) {
+                System.debug('The following error has occurred.');
+                System.debug(err.getStatusCode() + ': ' + err.getMessage());
+                System.debug('order fields that affected this error: ' + err.getFields());
+            }
+        }
+    }
+}
