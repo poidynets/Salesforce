@@ -1,0 +1,4 @@
+<aura:component controller="RecordUnlockApexController" implements="force:lightningQuickAction,force:hasRecordId" >
+<aura:attribute name="recordId" type="String" />
+<aura:handler name="init" value="{!this}" action="{!c.doInit}" class="slds-hide"/>
+</aura:component>
