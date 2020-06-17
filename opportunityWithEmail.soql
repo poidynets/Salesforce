@@ -1,0 +1,3 @@
+And Export Opportunity Object:
+SELECT Id, AccountId FROM Opportunity
+WHERE Id IN (SELECT RelatedToId FROM EmailMessage)
