@@ -1,0 +1,2 @@
+SELECT Id, Owner.Email, OwnerId, Description, EndDateTime FROM Event WHERE Subject = NULL ORDER BY EndDateTime DESC
+                       LIMIT 2000
