@@ -1,0 +1,3 @@
+SELECT ID, OwnerId, CreatedById, ActivityDate, Subject, ActivityDateTime, WhatId, Description, WhoId
+FROM Event
+WHERE (OwnerId = '0050X000009tgKFQAY' OR CreatedById = '0050X000009tgKFQAY') AND Subject = 'Daily Huddle'  LIMIT 2000
