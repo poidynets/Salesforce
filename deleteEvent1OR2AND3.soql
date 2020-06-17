@@ -1,0 +1,7 @@
+List <Event> events = [SELECT ID FROM Event WHERE Subject = 'Daily Huddle' AND (OwnerId = '0050X000009tgKFQAY' OR CreatedById = '0050X000009tgKFQAY')
+                       LIMIT 2000];
+try {
+    delete events;
+} catch (DmlException ex) {
+    System.debug('The following exception has occurred: ' + ex.getMessage());
+}
