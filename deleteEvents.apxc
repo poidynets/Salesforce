@@ -1,0 +1,9 @@
+List <Event> events = [SELECT Id, Owner.Email, OwnerId, Description, EndDateTime FROM Event WHERE Subject = NULL ORDER BY EndDateTime DESC
+                       LIMIT 2000];
+try {
+    delete events;
+    System.debug('Events were removed');
+
+} catch (DmlException ex) {
+    System.debug('The following exception has occurred: ' + ex.getMessage());
+}
