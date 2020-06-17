@@ -1,0 +1,3 @@
+Select Id, TaskSubtype, WhatId
+FROM Task
+WHERE WHATID = '0060X00000WO1aYQAT' AND (TaskSubtype = 'Email' OR TaskSubtype = 'ListEmail')
