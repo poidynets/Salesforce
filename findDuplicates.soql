@@ -1,0 +1,1 @@
+SELECT count(Id), Name FROM Opportunity GROUP BY Name HAVING count(Id) > 1
