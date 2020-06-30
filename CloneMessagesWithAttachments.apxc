@@ -1,0 +1,94 @@
+//Declaring list which will hold all email clones
+List<EmailMessage> eMailMs = new List<EmailMessage>();
+//Declaring List for next retrieving all ContentDocumentLink records related with EmailMessage we are interested in
+List<ContentDocumentLink> newContentDocumentLinkRecords = new List<ContentDocumentLink>();
+//Declaring List for holding old ContentDocumentLink records related to EmailMessage which we are cloning
+List<ContentDocumentLink> oldContentDocumentLinkRecords = new List<ContentDocumentLink>();
+//Declaring Map for holding relationship between old Email Records and new EmailMessage Records
+Map<Id,Id> mapEmailMessages = new Map<id,id>();
+//Declaring value of Opportunity record which consist messages we want to migrate
+String parentOpportunity = '0060X00000XS8RmQAL';
+//Declaring value of Opportunity record which should get messages from original Opportunity object
+String childOpportunity = '0061x00000D7VDaAAN';
+//Retrieving all Opportunity record
+Opportunity opp = [SELECT ID, AccountId
+                FROM Opportunity
+                WHERE Id = : parentOpportunity];
+System.Debug(opp);
+//Retrieving all EmailMessage records related with Opportunity we are interested in
+List<EmailMessage> eMailM = [SELECT Id, RelatedToId, BccAddress, CcAddress, CreatedById, CreatedDate, FirstOpenedDate, FromAddress, FromName, HasAttachment, Headers, HtmlBody, IsExternallyVisible, Incoming, IsPrivateDraft, LastModifiedById, LastModifiedDate, LastOpenedDate, MessageDate, ParentId, Subject, TextBody, ToAddress
+                            FROM EmailMessage
+                            WHERE RelatedToId = : opp.Id];
+System.Debug(eMailM);
+//Loop for cloning all EmailMessage records related with Opportunity we are interested in
+for(EmailMessage em : eMailM)
+{
+EmailMessage emCopy = em.clone(false,true,true);
+//Looping and replacing parentOpportunity value (RelatedToId) by childOpportunity for newly created EmailMessage Records
+emCopy.RelatedToId = childOpportunity;
+mapEmailMessages.put(em.Id,emCopy.Id);
+//Checking value of original EmailMessage Id and EmailMessage Record copy which storing in Map
+System.Debug(mapEmailMessages);
+//Adding EmailMessage instance to the list
+eMailMs.add(emCopy);
+}
+                //Inserting the list of EmailMessage records
+                if (!eMailMs.isEmpty())
+                {
+                    try
+                    {
+                        insert eMailMs;
+                    }
+                    catch (DmlException ex)
+                    {
+                        System.debug('The following exception has occurred: ' + ex.getMessage());
+                    }
+                }
+                //Retreiving the list of created EmailMessage records
+                for(EmailMessage emailMessage : eMailMs)
+                {
+                    system.debug('Inserted Email Message, Id '+emailMessage.Id);
+                }
+                if (!mapEmailMessages.keySet().isEmpty())
+                {
+                //Checking is current EmailMessage Record copy has setted value that Attachment is available
+                for(EmailMessage emailMessages : eMailMs)
+                {
+                    if (emailMessages.HasAttachment)
+                    {
+                        //Retrieving all ContentDocumentLink Object records which are related with EmailMessage Object records
+                        List<ContentDocumentLink> fileContentDocumentLink = [SELECT Id, ContentDocumentId, LinkedEntityId, ShareType, Visibility
+                                                                            FROM ContentDocumentLink
+                                                                            WHERE LinkedEntityId = : emailMessages.Id];
+                        System.Debug(fileContentDocumentLink);
+                        //Checking is there any value presented in list of ContentDocumentLink Object Records, related to EmailMessage Object records
+                        if (fileContentDocumentLink.size() > 0)
+                        {
+                            //Looping through list of related to EmailMessage Object Record Relations to ContentDocumentLink
+                            for(ContentDocumentLink fileContentDocumentLinkRecord : fileContentDocumentLink)
+                            {
+                                //Cloning related ContentDocumentLink Records
+                                ContentDocumentLink newContentDocumentLinkRecord = fileContentDocumentLinkRecord.clone(false,true,true);;
+                                //Setting relation to copy of the EmailMessage object record
+                                newContentDocumentLinkRecord.LinkedEntityId = emailMessages.Id;
+                                //Adding new ContentDocumentLink instance to the list
+                                newContentDocumentLinkRecords.add(newContentDocumentLinkRecord);
+                                //Adding old instance to the list
+                                oldContentDocumentLinkRecords.add(fileContentDocumentLinkRecord);
+                            }
+                        }
+                    }
+                }
+                }
+                //Inserting the list of ContentDocumentLink records
+                if (!newContentDocumentLinkRecords.isEmpty())
+                {
+                    try
+                    {
+                        insert newContentDocumentLinkRecords;
+                    }
+                    catch (DmlException expt)
+                    {
+                        System.debug('The following exception has occurred: ' + expt.getMessage());
+                    }
+                }
