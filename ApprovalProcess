@@ -1,0 +1,52 @@
+OR(
+AND(
+Discount <= 0.15, Difference_Hardware_Percent__c <= 0.00, Difference_Professional_Services_Percen__c <= 0.15, Difference_Software_Percent__c <= 0.15, Difference_Support_Percent__c <= 0.05,
+Subtotal <=100000,
+ISPICKVAL(Type__c,"Pilot")
+),
+AND(
+Discount <= 0.15, Difference_Hardware_Percent__c <= 0.00, Difference_Professional_Services_Percen__c <= 0.15, Difference_Software_Percent__c <= 0.15, Difference_Support_Percent__c <= 0.05,
+Subtotal <=30000
+)
+)
+
+
+OR (
+AND (
+Discount <= 0.15, Difference_Hardware_Percent__c <= 0.00, Difference_Professional_Services_Percen__c <= 0.15, Difference_Software_Percent__c <= 0.15, Difference_Support_Percent__c <= 0.05,
+Subtotal >100000,
+(ISPICKVAL(Type__c, "Pilot"))
+),
+AND (Discount <= 0.15, Difference_Hardware_Percent__c <= 0.00, Difference_Professional_Services_Percen__c <= 0.15, Difference_Software_Percent__c <= 0.15, Difference_Support_Percent__c <= 0.05,
+Subtotal <=100000,
+Subtotal >30000,
+NOT(ISPICKVAL(Type__c, "Pilot"))
+),
+AND (
+OR (Discount > 0.15, Difference_Hardware_Percent__c > 0.00, Difference_Professional_Services_Percen__c > 0.15, Difference_Software_Percent__c > 0.15, Difference_Support_Percent__c > 0.05 ),
+ISPICKVAL(Type__c, "Pilot"),
+Subtotal <=30000
+)
+)
+
+
+	OR(
+AND(
+Discount <= 0.15, Difference_Hardware_Percent__c <= 0.00, Difference_Professional_Services_Percen__c <= 0.15, Difference_Software_Percent__c <= 0.15, Difference_Support_Percent__c <= 0.05,
+Subtotal >100000,
+NOT(ISPICKVAL(Type__c, "Pilot"))
+),
+AND(
+OR (Discount > 0.15, Difference_Hardware_Percent__c > 0.00, Difference_Professional_Services_Percen__c > 0.15, Difference_Software_Percent__c > 0.15, Difference_Support_Percent__c > 0.05 ),
+Subtotal >30000,
+ISPICKVAL(Type__c, "Pilot")
+),
+AND (
+OR(Discount > 0.15, Difference_Hardware_Percent__c > 0.00, Difference_Professional_Services_Percen__c > 0.15, Difference_Software_Percent__c > 0.15, Difference_Support_Percent__c > 0.05 ),
+NOT(ISPICKVAL(Type__c, "Pilot"))
+)
+),
+
+
+Discount_on_any_product
+IF (OR ((Discount > 0.15), (Difference_Software_Percent__c > 0.15),  (Difference_Hardware_Percent__c > 0.00), (Difference_Professional_Services_Percen__c > 0.15), (Difference_Support_Percent__c > 0.05) ), true,false)
