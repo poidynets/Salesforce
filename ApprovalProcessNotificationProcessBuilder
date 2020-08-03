@@ -1,0 +1,13 @@
+Quote was just Rejected?
+Formula evaluates to true:
+
+OR(
+AND(
+ISPICKVAL([Quote].Status, "Draft"),
+ISPICKVAL(PRIORVALUE([Quote].Status ), "In Review")
+),
+AND(
+ISPICKVAL([Quote].Status, "Draft"),
+ISPICKVAL(PRIORVALUE([Quote].Status ), "Approved")
+)
+)
