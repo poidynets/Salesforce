@@ -15,7 +15,7 @@ List<EmailMessage> eMailMessages = [SELECT Id, RelatedToId, FromName, HasAttachm
 //Putting original emailMessage records to Map
 for(EmailMessage email : eMailMessages){
     originalEmailMap.put(email.Id, email);
-    System.Debug('Message ID from originalEmailMap: ' + email.Id);
+    System.Debug('Message ID from originalEmailMap: ' + email.Id + ' Message Subject: ' + email.Subject);
 }
 
 
@@ -32,7 +32,7 @@ List<ContentDocumentLink> documentLinks = [SELECT Id, ContentDocumentId, LinkedE
                                            FROM ContentDocumentLink
                                            WHERE LinkedEntityId IN : messagesIDs];
 for(ContentDocumentLink documentLinksRetrieval : documentLinks)
-	System.debug('ContentDocumentId Instance from documentLinks: ' + documentLinksRetrieval.ContentDocumentId + ' LinkedEntityId: ' + documentLinksRetrieval.LinkedEntityId);
+System.debug('ContentDocumentId Instance from documentLinks: ' + documentLinksRetrieval.ContentDocumentId + ' LinkedEntityId: ' + documentLinksRetrieval.LinkedEntityId);
 
 //Putting new emailMessage records to Map
 for(ContentDocumentLink link : documentLinks){
