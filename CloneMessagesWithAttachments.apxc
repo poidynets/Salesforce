@@ -1,71 +1,44 @@
-//Declaring Map for holding old Email Records
-Map<Id, EmailMessage>originalEmailMap = new Map<Id, EmailMessage>();
-//Declaring Map for holding old Email Records
-Map<Id, EmailMessage>clonedEmailsByLink = new Map<Id, EmailMessage>();
-//Declaring List for holding all clones of ContentDocumentLink Records
+Map<Id, EmailMessage>clonedEmailsByOriginalId = new Map<Id, EmailMessage>();
 List<ContentDocumentLink> clonedLinks = new List <ContentDocumentLink>();
-//Declaring value of Opportunity record which consist messages we want to migrate
 String parentOpportunity = '0060X00000ec5UYQAY';
-//Declaring value of Opportunity record which should get messages from original Opportunity object
-String childOpportunity = '0061x00000IEVFQAA5';
-//Retrieving all EmailMessage records related with Opportunity we are interested in
+String childOpportunity = '0061q000009dKI1AAM';
 List<EmailMessage> eMailMessages = [SELECT Id, RelatedToId, FromName, HasAttachment, ParentId, Subject, HTMLBody, MessageDate, BccAddress, BccIds, CcAddress, CcIds, EmailTemplateId, FirstOpenedDate, FromAddress, Headers, Incoming, IsBounced, IsClientManaged, IsDeleted, IsExternallyVisible, IsOpened, IsTracked, LastOpenedDate, ReplyToEmailMessageId, TextBody, ToAddress
-                                    FROM EmailMessage
-                                    WHERE RelatedToId = : parentOpportunity];
-//Putting original emailMessage records to Map
-for(EmailMessage email : eMailMessages){
-    originalEmailMap.put(email.Id, email);
-    System.Debug('Message ID from originalEmailMap: ' + email.Id + ' Message Subject: ' + email.Subject);
-}
-
-
-//Declaring List to hold all EmailMessage Recors Id's
+                                    FROM EmailMessage WHERE RelatedToId = : parentOpportunity];
+                                    //Declaring List to hold all EmailMessage Recors Id's
 Set<Id> messagesIDs = new Set<Id>();
 //Putting EmailMessage Recors Id's to list
 for(EmailMessage eMailMessagesRecord : eMailMessages){
 messagesIDs.add(eMailMessagesRecord.Id);
 }
-
-System.Debug('Message IDs from messagesIDs list: ' + messagesIDs);
-//Declaring and Assigning all ContentDocumentLink Records related to EmailMessage
-List<ContentDocumentLink> documentLinks = [SELECT Id, ContentDocumentId, LinkedEntityId, ShareType, Visibility
-                                           FROM ContentDocumentLink
-                                           WHERE LinkedEntityId IN : messagesIDs];
-for(ContentDocumentLink documentLinksRetrieval : documentLinks)
-System.debug('ContentDocumentId Instance from documentLinks: ' + documentLinksRetrieval.ContentDocumentId + ' LinkedEntityId: ' + documentLinksRetrieval.LinkedEntityId);
-
-//Putting new emailMessage records to Map
-for(ContentDocumentLink link : documentLinks){
-    EmailMessage originalEmail = originalEmailMap.get(link.LinkedEntityId);
-    if(originalEmail != null){
-        EmailMessage clonedEmail = originalEmail.clone();
-        clonedEmail.RelatedToId = childOpportunity;
-        clonedEmailsByLink.put(link.Id, clonedEmail);
-    }
+for(EmailMessage originalEmail : eMailMessages){
+    EmailMessage clonedEmail = originalEmail.clone();
+    clonedEmail.RelatedToId = childOpportunity;
+    clonedEmailsByOriginalId.put(originalEmail.Id, clonedEmail);
 }
-insert clonedEmailsByLink.values();
-//Putting new ContentDocumentLink Records to List
+try
+{
+insert clonedEmailsByOriginalId.values();
+}
+catch (DmlException expt)
+{
+    System.Debug('The following exception has occurred: ' + expt.getMessage());
+}
+List<ContentDocumentLink> documentLinks = [SELECT Id, ContentDocumentId, LinkedEntityId, ShareType, Visibility
+                                           FROM ContentDocumentLink WHERE LinkedEntityId IN :messagesIDs];
 for(ContentDocumentLink link : documentLinks){
-    EmailMessage clonedEmail = clonedEmailsByLink.get(link.Id);
+    EmailMessage clonedEmail = clonedEmailsByOriginalId.get(link.LinkedEntityId);
     if(clonedEmail != null){
         ContentDocumentLink clonedLink = link.clone();
         clonedLink.LinkedEntityId = clonedEmail.Id;
         clonedLinks.add(clonedLink);
     }
 }
-for(ContentDocumentLink clonedLinksRetrieval : clonedLinks)
-	System.debug('ContentDocumentId Instance from clonedLinks: ' + clonedLinksRetrieval.ContentDocumentId + ' LinkedEntityId: ' + clonedLinksRetrieval.LinkedEntityId);
-
-//Inserting the list of ContentDocumentLink records
-if (!clonedLinks.isEmpty())
+try
 {
-    try
-    {
-        insert clonedLinks;
-    }
-    catch (DmlException expt)
-    {
-        System.Debug('The following exception has occurred: ' + expt.getMessage());
-    }
+    insert clonedLinks;
+}
+catch (DmlException expt)
+{
+    System.Debug('The following exception has occurred: ' + expt.getMessage());
 }
 
