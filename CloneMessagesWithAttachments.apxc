@@ -11,7 +11,7 @@ for(EmailMessage eMailMessagesRecord : eMailMessages){
 messagesIDs.add(eMailMessagesRecord.Id);
 }
 for(EmailMessage originalEmail : eMailMessages){
-    EmailMessage clonedEmail = originalEmail.clone();
+    EmailMessage clonedEmail = originalEmail.clone(false, true, false, false);
     clonedEmail.RelatedToId = childOpportunity;
     clonedEmailsByOriginalId.put(originalEmail.Id, clonedEmail);
 }
@@ -28,7 +28,7 @@ List<ContentDocumentLink> documentLinks = [SELECT Id, ContentDocumentId, LinkedE
 for(ContentDocumentLink link : documentLinks){
     EmailMessage clonedEmail = clonedEmailsByOriginalId.get(link.LinkedEntityId);
     if(clonedEmail != null){
-        ContentDocumentLink clonedLink = link.clone();
+        ContentDocumentLink clonedLink = link.clone(false, true, false, false);
         clonedLink.LinkedEntityId = clonedEmail.Id;
         clonedLinks.add(clonedLink);
     }
