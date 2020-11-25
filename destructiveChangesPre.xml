@@ -1,0 +1,10 @@
+#sfdx force:mdapi:deploy -d '%files location path%' -u <target org> -w -1
+# Example: sfdx force:mdapi:deploy -d 'C:\Users\Vasyl_Poidynets\OneDrive - Nor\development\destruct\pre-deployment' -u VasOrg -w -1
+<?xml version='1.0' encoding='utf-8'?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>Order.Should_be_approved_before_invoicing</members>
+		<name>ValidationRule</name>
+	</types>
+    <version>48.0</version>
+</Package>
