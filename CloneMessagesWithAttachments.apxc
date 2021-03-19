@@ -1,44 +1,48 @@
-Map<Id, EmailMessage>clonedEmailsByOriginalId = new Map<Id, EmailMessage>();
+Map<Id, EmailMessage> clonedEmailsByOriginalId = new Map<Id, EmailMessage>();
 List<ContentDocumentLink> clonedLinks = new List <ContentDocumentLink>();
-String parentOpportunity = '0060X00000ec5UYQAY';
-String childOpportunity = '0061q000009dKI1AAM';
-List<EmailMessage> eMailMessages = [SELECT Id, RelatedToId, FromName, HasAttachment, ParentId, Subject, HTMLBody, MessageDate, BccAddress, BccIds, CcAddress, CcIds, EmailTemplateId, FirstOpenedDate, FromAddress, Headers, Incoming, IsBounced, IsClientManaged, IsDeleted, IsExternallyVisible, IsOpened, IsTracked, LastOpenedDate, ReplyToEmailMessageId, TextBody, ToAddress
-                                    FROM EmailMessage WHERE RelatedToId = : parentOpportunity];
-                                    //Declaring List to hold all EmailMessage Recors Id's
-Set<Id> messagesIDs = new Set<Id>();
-//Putting EmailMessage Recors Id's to list
-for(EmailMessage eMailMessagesRecord : eMailMessages){
-messagesIDs.add(eMailMessagesRecord.Id);
-}
-for(EmailMessage originalEmail : eMailMessages){
-    EmailMessage clonedEmail = originalEmail.clone(false, true, false, false);
+String parentOpportunity = '0060X00000TnzBJQAZ';
+String childOpportunity = '0060X00000lasaDQAQ';
+List<EmailMessage> eMailMessages = [SELECT Id, RelatedToId, FromName, Subject, 
+                                    HTMLBody, MessageDate, BccAddress, CcAddress, CcIds, 
+                                    FromAddress, LastOpenedDate, ReplyToEmailMessageId, 
+                                    TextBody, ToAddress, Status
+                                    FROM EmailMessage WHERE RelatedToId = :parentOpportunity];
+for(EmailMessage email : eMailMessages){
+    EmailMessage clonedEmail = new EmailMessage();
+    clonedEmail.Subject = email.Subject;
+    clonedEmail.FromName = email.FromName;
+    clonedEmail.HtmlBody = email.HtmlBody;
+    clonedEmail.MessageDate = email.MessageDate;
+    clonedEmail.CcAddress = email.CcAddress;
+    clonedEmail.FromAddress = email.FromAddress;
+    clonedEmail.TextBody = email.TextBody;
+    clonedEmail.ToAddress = email.ToAddress;
+    clonedEmail.Status = email.Status;
+    clonedEmail.BccAddress = email.BccAddress;
     clonedEmail.RelatedToId = childOpportunity;
-    clonedEmailsByOriginalId.put(originalEmail.Id, clonedEmail);
+    clonedEmailsByOriginalId.put(email.Id, clonedEmail);
 }
-try
-{
 insert clonedEmailsByOriginalId.values();
-}
-catch (DmlException expt)
-{
-    System.Debug('The following exception has occurred: ' + expt.getMessage());
-}
 List<ContentDocumentLink> documentLinks = [SELECT Id, ContentDocumentId, LinkedEntityId, ShareType, Visibility
-                                           FROM ContentDocumentLink WHERE LinkedEntityId IN :messagesIDs];
+                                           FROM ContentDocumentLink WHERE LinkedEntityId IN :clonedEmailsByOriginalId.keySet()];
+System.debug(documentLinks);
 for(ContentDocumentLink link : documentLinks){
     EmailMessage clonedEmail = clonedEmailsByOriginalId.get(link.LinkedEntityId);
     if(clonedEmail != null){
-        ContentDocumentLink clonedLink = link.clone(false, true, false, false);
+        ContentDocumentLink clonedLink = new ContentDocumentLink();
+        clonedLink.ContentDocumentId = link.ContentDocumentId;
+        clonedLink.ShareType = link.ShareType;
+        clonedLink.Visibility = link.Visibility;
         clonedLink.LinkedEntityId = clonedEmail.Id;
         clonedLinks.add(clonedLink);
     }
 }
+System.debug(clonedLinks);
 try
 {
-    insert clonedLinks;
+   insert clonedLinks;
 }
 catch (DmlException expt)
 {
     System.Debug('The following exception has occurred: ' + expt.getMessage());
 }
-
