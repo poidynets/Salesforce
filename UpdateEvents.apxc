@@ -1,0 +1,19 @@
+List <Event> events = [SELECT Id, Owner.Email, OwnerId, Description, EndDateTime FROM Event WHERE Subject = NULL ORDER BY EndDateTime DESC
+                       LIMIT 2000];
+String errorMessage = '';
+Integer erorrCount = 0;
+
+
+if (events.size() > 0){
+    for (Event event : events){
+        event.Description = 'updated one';
+    }
+    List<Database.SaveResult> updateResult = Database.update(events, false);
+    for(Integer i = 0; i < updateResultsize(); i++){
+        if(!updateResult[i].isSuccess()){
+errorMessage += events[i].Id + ', ' + updateResult[i].getErrors();
+errorCount++;
+
+        }
+    }
+}
