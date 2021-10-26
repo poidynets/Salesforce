@@ -1,0 +1,36 @@
+//      Script to Update User Object records
+//      It has been developed in order to update Users Email that are existing in Custom Metadata.
+//      Execute the anonymous code to complete change
+//      Before running script navigate to Setup => Custom Metadata Types ans check email addresses there
+
+String errorMessage = '';
+Integer errorCount = 0;
+List<String> UserNames = new List<String>();
+List <User__mdt> Users = [SELECT User_Name__c FROM User__mdt];
+for (User__mdt user : users) {
+    System.debug('User Name  from Custom Metadata: ' + user.User_Name__c);
+    UserNames.add(user.User_Name__c);
+}
+User_email__mdt userEmailNonProd = [SELECT User_email_NonProd__c FROM User_email__mdt LIMIT 1];
+System.debug('Non Production email Address from Custom Metadata: ' + userEmailNonProd.User_email__mdt);
+
+if(UserNames.size() > 0) {
+    List <User> usersToUpdate = [SELECT Id, Username, Email from User WHERE Username=: UserNames];
+    for (User userToUpdate : usersToUpdate) {
+        userToUpdate.Email = userEmailNonProd.User_email_NonProd__c;
+        System.debug('User To Update User Name: ' + userToUpdate.Username);
+    }
+    List<Database.SaveResult> updateResult  = Database.update(usersToUpdate, false);
+    for(Integer i = 0; i < updateResult.size(); i++){
+        if(!updateResult[i].isSuccess()) {
+            errorMessage += usersToUpdate[i].Id + ' - ' + updateResult[i].getErrors() + '<br/>';
+            errorCount++;
+            System.debug('Error message during record update: '+ errorMessage);
+        }
+        else{
+            System.debug('There was '+ usersToUpdate.size() + ' records to update.');
+        }
+    }
+}
+
+
