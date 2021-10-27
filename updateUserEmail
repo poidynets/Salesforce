@@ -5,7 +5,7 @@
 
 String errorMessage = '';
 Integer errorCount = 0;
-List<String> UserNames = new List<String>();
+List <String> UserNames = new List<String>();
 List <User__mdt> Users = [SELECT User_Name__c FROM User__mdt];
 for (User__mdt user : users) {
     System.debug('User Name  from Custom Metadata: ' + user.User_Name__c);
