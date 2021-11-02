@@ -1,0 +1,24 @@
+//      Script to Udpdate records
+//      It can update up to 2k records by one run
+//      Execute the anonymous code multiple times until the query returns no records
+//      SELECT Id FROM object_name WHERE Status_Flag__c = TRUE LIMIT 2000
+List <test_object__c> recordIds = [SELECT Id, Status_Flag__c FROM test_object__c LIMIT 2000];
+String errorMessage = '';
+Integer errorCount = 0;
+
+if(recordIds.size() > 0) {
+    for(test_object__c recordId : recordIds) {
+        recordId.Status_Flag__c = FALSE;
+    }
+    List<Database.SaveResult> updateResult  = Database.update(recordIds, false);
+    for(Integer i = 0; i < updateResult.size(); i++){
+        if(!updateResult[i].isSuccess()) {
+            errorMessage += recordIds[i].Id + ' - ' + updateResult[i].getErrors() + '<br/>';
+            errorCount++;
+            System.debug('Error message during record update: '+ errorMessage);
+        }
+        else{
+            System.debug('There was '+ recordIds.size() + ' to update.');
+        }
+    }
+ }
