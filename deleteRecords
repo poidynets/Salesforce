@@ -1,0 +1,25 @@
+//      Script to Delete Object records
+//      It can delete up to 5k records by one run
+//      Execute the anonymous code multiple times until the query returns no records
+//      SELECT Id, Status__c FROM object_name WHERE Status_Flag__c != 'processed' LIMIT 5000
+List <object_name> recordIds = [SELECT Id, Status_Flag__c FROM object_name WHERE Status_Flag__c = 'processed'  LIMIT 5000];
+
+if(recordIds.size() > 0) {
+    // Delete the records
+    Database.DeleteResult[] drList = Database.delete(recordIds, false);
+    // Iterate through each returned result
+    for(Database.DeleteResult dr : drList) {
+        if (dr.isSuccess()) {
+            // Operation was successful, so get the ID of the record that was processed
+            System.debug('Successfully deleted record with ID: ' + dr.getId());
+        }
+        else {
+            // Operation failed, so get all errors                
+            for(Database.Error err : dr.getErrors()) {
+                System.debug('The following error has occurred.');                    
+                System.debug(err.getStatusCode() + ': ' + err.getMessage());
+                System.debug('Record fields that affected this error: ' + err.getFields());
+            }
+        }
+    }
+}
