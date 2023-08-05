@@ -3,7 +3,7 @@ import uId from '@salesforce/user/Id';
 import { NavigationMixin } from "lightning/navigation";
 export default class LaunchCaseCreationLwc extends LightningElement {
     @api userId = uId;
-    @api site = 'TSVConnect';
+    @api env = 'Dev';
 
     
     connectedCallback() {
@@ -12,9 +12,9 @@ export default class LaunchCaseCreationLwc extends LightningElement {
     get inputVariables() {
         return [
             {
-                name: 'Site',
+                name: 'Env',
                 type: 'String',
-                value: this.site
+                value: this.env
             },
             {
                 name: 'UserId',
