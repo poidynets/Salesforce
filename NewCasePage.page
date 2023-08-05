@@ -1,0 +1,59 @@
+<apex:page sidebar="false" showHeader="false" standardController="Case" lightningStylesheets="true">
+    <!-- Visualforce page to launch the Lightning Flow for New Case Creation -->
+    <html>
+        <head>
+            <apex:includeLightning />
+            <apex:includeScript value="/lightning/lightning.out.js"/>
+            <apex:slds />
+        </head>
+        <body class="slds-scope">
+            <apex:form>
+                <apex:pageBlock>
+                    <!-- Container for the Lightning Flow component -->
+                    <div id="LightningContainer" class="slds-box slds-p-around_medium"></div>
+                </apex:pageBlock>
+            </apex:form>
+            <script type="text/javascript">
+                // Define constants for URLs
+                const BASE_URL = "{!URLFOR('/')}"; // Use Visualforce URLFOR to get the base URL
+
+                // Define the statusChange function to handle flow status changes
+                function statusChange(event) {
+                    if (event.getParam('status') === 'FINISHED') {
+                        // Redirect to the desired URL when the flow is finished
+                        window.location.href = BASE_URL + "500/o";
+                    }
+                }
+
+                // Load the NewCaseApp LWC and start the flow
+                $Lightning.use("c:NewCaseApp", function() {
+                    const inputVariables = [
+                        {
+                            name: 'Env',
+                            type: 'String',
+                            value: 'Dev'
+                        },
+                        {
+                            name: 'UserId',
+                            type: 'String',
+                            value: '{!$User.Id}'
+                        }
+                    ];
+
+                    // Start the flow in the LightningContainer div and initialize the input variables.
+                    $Lightning.createComponent(
+                        "lightning:flow",
+                        {
+                            onstatuschange: statusChange,
+                            renderMode: "LightningRuntime"
+                        },
+                        "LightningContainer",
+                        function (component) {
+                            component.startFlow("Case_Creation", inputVariables);
+                        }
+                    );
+                });
+            </script>
+        </body>
+    </html>
+</apex:page>
