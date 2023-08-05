@@ -1,0 +1,7 @@
+<template>
+    <lightning-flow if:true={inputVariables}
+        flow-api-name='Case_Creation'
+        flow-input-variables={inputVariables}
+        onstatuschange={handleStatusChange}>
+    </lightning-flow>
+</template>
