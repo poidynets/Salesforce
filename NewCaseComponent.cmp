@@ -1,0 +1,11 @@
+<aura:component
+    implements="lightning:actionOverride,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader"
+    access="global"
+    description="Component to be used for New Case Action Override"
+>
+
+    <!-- Component Markup -->
+    <div class="component-container">
+        <c:newCaseLwc />
+    </div>
+</aura:component>
