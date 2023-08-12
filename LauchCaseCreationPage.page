@@ -1,0 +1,31 @@
+<apex:page standardController="Case" lightningStylesheets="True">
+    <!-- Page for Launching Case Creation Lightning Flow -->
+    <!-- It could be lauched by Page override -->
+    <!-- Example: <apex:outputPanel rendered="{!AND(CONTAINS($CurrentPage.Url, 'orgtestname'), CONTAINS($CurrentPage.Url, '/community/'))}">
+        <apex:include pageName="LaunchCaseCreationPage"/> </apex:outputPanel> -->
+    <apex:includeLightning />
+    <apex:slds />
+    <apex:form>
+        <!-- Custom link, hidden from view that is launching automatically when the page loads -->
+        <a id="hiddenLink" href="javascript:void(0);" onclick="launchCustomLink()" style="display: none;">Hidden Link</a>
+    </apex:form>
+    <script>
+        var clicked = false; // Variable to track if the link has been launched
+        
+        function launchCustomLink() {
+            if (!clicked) {
+                clicked = true; // Set clicked to true
+                
+                var baseURL = window.location.protocol + '//' + window.location.hostname;
+                var customLinkURL = baseURL + '/flow/Case_Creation_Flow?Env=Dev&UserId={!$User.Id}&retURL=500/o';
+                // Open the customLinkURL in a new window
+                window.open(customLinkURL, '_blank');
+            }
+        }
+        
+        // Automatically trigger the link when the page loads
+        window.onload = function() {
+            launchCustomLink();
+        }
+    </script>
+</apex:page>
