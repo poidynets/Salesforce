@@ -1,0 +1,39 @@
+<template>
+    <!-- Lightning Web Component to contain the case type selection -->
+    <lightning-card title={label.SelectionHeaderMsg} icon-name="standard:account">
+        <!-- Margin around the content -->
+        <div class="slds-m-around_medium">
+            <!-- Conditional rendering based on the presence of structuredRecordTypeData -->
+            <template if:true={structuredRecordTypeData}>
+                <!-- Lightning Datatable to display available case record types -->
+                <lightning-datatable
+                    columns={columns}
+                    data={structuredRecordTypeData}
+                    key-field="Name"
+                    max-row-selection="1"
+                    onrowselection={handleRowSelection}
+                    selected-rows={selectedRows}
+                    wrap-text-max-lines="1">
+                </lightning-datatable>
+            </template>
+            <template if:false={structuredRecordTypeData}>
+                <!-- Display an error message if structuredRecordTypeData is not available -->
+                <p>Nothing to show</p>
+            </template>
+        </div>
+    </lightning-card>
+
+    <!-- Conditional rendering of footer and buttons based on the presence of structuredRecordTypeData -->
+    <template if:true={structuredRecordTypeData}>
+        <!-- Footer section with alignment to the end -->
+        <footer class="slds-card__footer slds-grid slds-grid_align-end">
+            <!-- Lightning Button for selecting the record type -->
+            <lightning-button
+                label="Select" 
+                variant="brand"
+                onclick={handleSelect}
+                class="slds-button slds-button_brand slds-float_right">
+            </lightning-button>
+        </footer>
+    </template>
+</template>
