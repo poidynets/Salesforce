@@ -6,6 +6,6 @@
 
     <!-- Component Markup -->
     <div class="component-container">
-        <c:newCaseLwc />
+        <c:caseTypeSelectionLWC />
     </div>
 </aura:component>
