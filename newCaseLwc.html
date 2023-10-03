@@ -2,6 +2,7 @@
     <lightning-flow if:true={inputVariables}
         flow-api-name='Case_Creation'
         flow-input-variables={inputVariables}
+        flow-finish-behavior='RESTART'
         onstatuschange={handleStatusChange}>
     </lightning-flow>
 </template>
