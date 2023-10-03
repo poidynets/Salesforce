@@ -1,7 +1,7 @@
 import { LightningElement, api } from 'lwc';
 import uId from '@salesforce/user/Id';
 import { NavigationMixin } from "lightning/navigation";
-export default class LaunchCaseCreationLwc extends LightningElement {
+export default class NewCase extends LightningElement {
     @api userId = uId;
     @api env = 'Dev';
 
