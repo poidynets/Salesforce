@@ -150,7 +150,7 @@ export default class CaseTypeSelection extends NavigationMixin(LightningElement)
         this[NavigationMixin.Navigate]({
             type: 'standard__component',
             attributes: {
-                componentName: 'c__launchCaseFlowComponent'
+                componentName: 'c__NewCaseComponent'
             },
         }, true);
     }
